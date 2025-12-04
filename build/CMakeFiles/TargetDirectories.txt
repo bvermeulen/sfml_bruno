@@ -1,3 +1,0 @@
-D:/OneDrive/Development/sfml_bruno/build/CMakeFiles/move_weight.dir
-D:/OneDrive/Development/sfml_bruno/build/CMakeFiles/edit_cache.dir
-D:/OneDrive/Development/sfml_bruno/build/CMakeFiles/rebuild_cache.dir
