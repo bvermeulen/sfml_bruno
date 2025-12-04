@@ -76,12 +76,12 @@ class weightObject
     public:
         weightObject(sf::RenderWindow& windowRef, float x, float y, float radius, sf::Color color): window(windowRef)
         {
-            sf::Vector2f position = sf::Vector2f(x, y);
             objectColor = color;
             objectRadius = radius;
-            weightShape.setPosition(position);
-            weightShape.setRadius(radius);
-            weightShape.setFillColor(color);
+            sf::Vector2f objectCenter = sf::Vector2f(x, y) - sf::Vector2f(objectRadius, objectRadius);
+            weightShape.setPosition(objectCenter);
+            weightShape.setRadius(objectRadius);
+            weightShape.setFillColor(objectColor);
             moving = false;
             selected = false;
         }
@@ -104,7 +104,9 @@ int main()
     sf::RenderWindow window(sf::VideoMode({1000, 500}), "Hello weights!!");
     vector<weightObject> weights {
         weightObject(window, 40, 50, 20.0, sf::Color::Yellow),
-        weightObject(window, 140, 350, 40.0, sf::Color::Green)
+        weightObject(window, 140, 350, 40.0, sf::Color::Green),
+        weightObject(window, 1000, 0, 200.0, sf::Color::Blue),
+
     };
     sf::Color background = sf::Color(100,100,100);
 
