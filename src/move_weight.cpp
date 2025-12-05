@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <iostream>
 
 using namespace std;
@@ -29,13 +28,13 @@ class weightObject
 
                     if (!selected && withinWeight)
                     {
-                        // printf("object selected! (%.2f, %.2f) (%.2f, %.2f)\n", mousePos.x, mousePos.y, weightCenter.x, weightCenter.y);
+                        printf("object selected! (%.2f, %.2f) (%.2f, %.2f)\n", mousePos.x, mousePos.y, weightCenter.x, weightCenter.y);
                         weightShape.setFillColor(sf::Color::Red);
                         selected = true;
                     }
                     else if (selected && withinWeight)
                     {
-                        // printf("object deselected! %.2f, %.2f) (%.2f, %.2f)\n", mousePos.x, mousePos.y, weightCenter.x, weightCenter.y);
+                        printf("object deselected! %.2f, %.2f) (%.2f, %.2f)\n", mousePos.x, mousePos.y, weightCenter.x, weightCenter.y);
                         weightShape.setFillColor(objectColor);
                         selected = false;
                     }
@@ -51,6 +50,8 @@ class weightObject
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left)
                 {
                     sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonPressed->position);
+                    printf("object selected! (%.2f, %.2f)\n", mousePos.x, mousePos.y);
+
                     sf::Vector2f weightCenter = weightShape.getPosition() + sf::Vector2f(objectRadius, objectRadius);
                     sf::Vector2f distVector = mousePos - weightCenter;
                     float distanceSquare = distVector.x * distVector.x + distVector.y * distVector.y;
@@ -63,9 +64,11 @@ class weightObject
 
             if (moving && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
-                sf::Vector2 mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
+                sf::Vector2 mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 sf::Vector2f position = mousePos - sf::Vector2f(objectRadius, objectRadius);
                 weightShape.setPosition(position);
+                printf("object selected! (%.2f, %.2f) (%.2f, %.2f)\n", mousePos.x, mousePos.y, position.x, position.y);
+
             }
             else
             {
@@ -101,14 +104,26 @@ class weightObject
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({1000, 500}), "Hello weights!!");
+    float width = 1250;
+    float height = 750;
+    float xRange = 20;
+    float viewScale = xRange / width;
+    printf("width = %.2f, height = %.2f, viewScale = %.2f\n", width, height, viewScale);
+    
+    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(width, height)), "Hello weights!!");
+    sf::Color background = sf::Color(100,100,100);
+    sf::View weightView;
+    weightView.setSize(viewScale * sf::Vector2f(width, -height));
+    weightView.setCenter({0, 0});
+    window.setView(weightView);
+
     vector<weightObject> weights {
-        weightObject(window, 40, 50, 20.0, sf::Color::Yellow),
-        weightObject(window, 140, 350, 40.0, sf::Color::Green),
-        weightObject(window, 1000, 0, 200.0, sf::Color::Blue),
+        weightObject(window, 5.0, -2.5, 0.4, sf::Color::Yellow),
+        weightObject(window, -3.5, 2.0, 0.8, sf::Color::Green),
+        weightObject(window, 0.0, 0.0, 0.3, sf::Color::Blue),
 
     };
-    sf::Color background = sf::Color(100,100,100);
+
 
     printf("Hello weights!!\n");
     while (window.isOpen())
