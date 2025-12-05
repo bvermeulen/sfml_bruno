@@ -1,4 +1,4 @@
-# Simple and Fast Media Libraties
+# Simple and Fast Media Libraries
 
 Rendering apps using C++
 
