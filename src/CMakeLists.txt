@@ -7,7 +7,7 @@ set(sources
     move_weight.cpp
 )
 
-set(CMAKE_PREFIX_PATH "d:/cpp/SFML-3.0.2")
+set(CMAKE_PREFIX_PATH "/home/bvermeulen/Development/cpp/SFML-3.0.2")
 find_package(SFML COMPONENTS Graphics Window System REQUIRED)
 
 include_directories(
