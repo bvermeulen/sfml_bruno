@@ -3,14 +3,14 @@
 
 using namespace std;
 
-class weightObject
+class bobObject
 {
 
     private:
         sf::RenderWindow& window;
         sf::CircleShape weightShape;
-        sf::Color objectColor;
-        float objectRadius;
+        sf::Color bobColor;
+        float bobRadius;
         bool moving;
         bool selected;
     
@@ -21,10 +21,10 @@ class weightObject
                 if (mouseButtonReleased->button == sf::Mouse::Button::Right)
                 {
                     sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonReleased->position);
-                    sf::Vector2f weightCenter = weightShape.getPosition() + sf::Vector2f(objectRadius, objectRadius);
+                    sf::Vector2f weightCenter = weightShape.getPosition() + sf::Vector2f(bobRadius, bobRadius);
                     sf::Vector2f distVector = mousePos - weightCenter;
                     float distanceSquare = distVector.x * distVector.x + distVector.y * distVector.y;
-                    bool withinWeight = distanceSquare <= objectRadius * objectRadius;
+                    bool withinWeight = distanceSquare <= bobRadius * bobRadius;
 
                     if (!selected && withinWeight)
                     {
@@ -35,7 +35,7 @@ class weightObject
                     else if (selected && withinWeight)
                     {
                         printf("object deselected! %.2f, %.2f) (%.2f, %.2f)\n", mousePos.x, mousePos.y, weightCenter.x, weightCenter.y);
-                        weightShape.setFillColor(objectColor);
+                        weightShape.setFillColor(bobColor);
                         selected = false;
                     }
                 }
@@ -52,10 +52,10 @@ class weightObject
                     sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonPressed->position);
                     printf("object selected! (%.2f, %.2f)\n", mousePos.x, mousePos.y);
 
-                    sf::Vector2f weightCenter = weightShape.getPosition() + sf::Vector2f(objectRadius, objectRadius);
+                    sf::Vector2f weightCenter = weightShape.getPosition() + sf::Vector2f(bobRadius, bobRadius);
                     sf::Vector2f distVector = mousePos - weightCenter;
                     float distanceSquare = distVector.x * distVector.x + distVector.y * distVector.y;
-                    if (distanceSquare <= objectRadius * objectRadius)
+                    if (distanceSquare <= bobRadius * bobRadius)
                     {
                         moving = true;
                     }
@@ -65,7 +65,7 @@ class weightObject
             if (moving && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
                 sf::Vector2 mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-                sf::Vector2f position = mousePos - sf::Vector2f(objectRadius, objectRadius);
+                sf::Vector2f position = mousePos - sf::Vector2f(bobRadius, bobRadius);
                 weightShape.setPosition(position);
                 printf("object selected! (%.2f, %.2f) (%.2f, %.2f)\n", mousePos.x, mousePos.y, position.x, position.y);
 
@@ -77,14 +77,14 @@ class weightObject
         }
 
     public:
-        weightObject(sf::RenderWindow& windowRef, float x, float y, float radius, sf::Color color): window(windowRef)
+        bobObject(sf::RenderWindow& windowRef, float x, float y, float radius, sf::Color color): window(windowRef)
         {
-            objectColor = color;
-            objectRadius = radius;
-            sf::Vector2f objectCenter = sf::Vector2f(x, y) - sf::Vector2f(objectRadius, objectRadius);
+            bobColor = color;
+            bobRadius = radius;
+            sf::Vector2f objectCenter = sf::Vector2f(x, y) - sf::Vector2f(bobRadius, bobRadius);
             weightShape.setPosition(objectCenter);
-            weightShape.setRadius(objectRadius);
-            weightShape.setFillColor(objectColor);
+            weightShape.setRadius(bobRadius);
+            weightShape.setFillColor(bobColor);
             moving = false;
             selected = false;
         }
@@ -117,10 +117,10 @@ int main()
     weightView.setCenter({0, 0});
     window.setView(weightView);
 
-    vector<weightObject> weights {
-        weightObject(window, 5.0, -2.5, 0.4, sf::Color::Yellow),
-        weightObject(window, -3.5, 2.0, 0.8, sf::Color::Green),
-        weightObject(window, 0.0, 0.0, 0.3, sf::Color::Blue),
+    vector<bobObject> weights {
+        bobObject(window, 5.0, -2.5, 0.4, sf::Color::Yellow),
+        bobObject(window, -3.5, 2.0, 0.8, sf::Color::Green),
+        bobObject(window, 0.0, 0.0, 0.3, sf::Color::Blue),
 
     };
 

@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(move_weight)
+project(double_pendulum)
 enable_language(C CXX)
 
 set(sources
-    move_weight.cpp
+    double_pendulum.cpp
+    dp_main.cpp
 )
 
 set(CMAKE_PREFIX_PATH "d:/cpp/SFML-3.0.2")
@@ -16,9 +17,9 @@ include_directories(
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../bin)
-add_executable(move_weight ${sources} ${includes})
+add_executable(double_pendulum ${sources} ${includes})
 
-target_link_libraries(move_weight SFML::Graphics SFML::Window SFML::System)
+target_link_libraries(double_pendulum SFML::Graphics SFML::Window SFML::System)
 
-set_target_properties(move_weight PROPERTIES LDFLAGS "-Wall")
-set_target_properties(move_weight PROPERTIES COMPILE_FLAGS "-Wall -g -fvisibility=hidden")
+set_target_properties(double_pendulum PROPERTIES LDFLAGS "-Wall")
+set_target_properties(double_pendulum PROPERTIES COMPILE_FLAGS "-Wall -g -fvisibility=hidden")
