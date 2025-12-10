@@ -110,13 +110,15 @@ rodObject::rodObject(
 }
 
 void rodObject::drawObject()
-{
+{   
     sf::Vector2f direction = rodPoint2 - rodPoint1;
-    float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+    float length = sqrt(direction.x * direction.x + direction.y * direction.y) - radius1 - radius2;
     float angle = atan2(direction.y, direction.x);
     rodShape.setSize(sf::Vector2f(length, rodWidth));
     rodShape.setOrigin(sf::Vector2f(length * 0.5, rodWidth * 0.5));
-    sf::Vector2f center = (rodPoint1 + rodPoint2) / 2.0f;
+    sf::Vector2f p1 = rodPoint1 + sf::Vector2f(cos(angle), sin(angle)) * radius1;
+    sf::Vector2f p2 = rodPoint2 + sf::Vector2f(cos(PI + angle), sin(PI + angle)) * radius2;
+    sf::Vector2f center = (p1 + p2) * 0.5f;
     rodShape.setPosition(center);
     rodShape.setRotation(sf::radians(angle));
     
@@ -135,10 +137,10 @@ doublePendulum::doublePendulum(sf::RenderWindow& windowRef): window(windowRef)
 {
     sf::Vector2f hingePointCenter = sf::Vector2f(0.0, 0.0);
     float hingePointRadius = 0.3;
-    sf::Vector2f bob1Center = sf::Vector2f(5.0, -2.5);
-    float bob1Radius = 0.5;
+    sf::Vector2f bob1Center = sf::Vector2f(0.5, -2.5);
+    float bob1Radius = 0.6;
     sf::Vector2f bob2Center = sf::Vector2f(-3.5, 2.0);
-    float bob2Radius = 0.8;
+    float bob2Radius = 1.0;
 
     hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
     bob1 = new bobObject(window, bob1Center, bob1Radius, sf::Color::Yellow);
