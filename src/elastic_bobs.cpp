@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <double_pendulum.h>
+#include <bobs_view.h>
 
 using namespace std;
 
@@ -11,19 +11,19 @@ int main()
     float xRange = 20;
     float viewScale = xRange / width;
     printf("width = %.2f, height = %.2f, viewScale = %.2f\n", width, height, viewScale);
-    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(width, height)), "Hello weights!!");
+    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(width, height)), "Elastic Bobs!!");
     sf::Color background = sf::Color(100,100,100);
-    sf::View weightView;
-    weightView.setSize(viewScale * sf::Vector2f(width, -height));
-    weightView.setCenter({0, 0});
-    window.setView(weightView);
-    doublePendulum dpObject = doublePendulum(window);
+    sf::View bobsView;
+    bobsView.setSize(viewScale * sf::Vector2f(width, -height));
+    bobsView.setCenter({0, 0});
+    window.setView(bobsView);
+    bobsViewObject bv = bobsViewObject(window);
 
     printf("Hello weights!!\n");
     while (window.isOpen())
     {
         window.clear(background);
-        dpObject.draw();
+        bv.draw();
         window.display();
 
         while (optional event = window.pollEvent())
@@ -32,8 +32,8 @@ int main()
                 window.close();
             
             window.clear(background);
-            dpObject.update(*event);
-            dpObject.draw();
+            bv.update(*event);
+            bv.draw();
             window.display();
         }
     }

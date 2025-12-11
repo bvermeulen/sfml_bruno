@@ -1,5 +1,5 @@
-#ifndef DOUBLE_PENDULUM
-#define DOUBLE_PENDULUM
+#ifndef DP_VIEW
+#define DP_VIEW
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -53,10 +53,10 @@ class rodObject
         sf::RectangleShape rodShape;
 };
 
-class doublePendulum
+class dpViewObject
 {
     public:
-        doublePendulum(sf::RenderWindow& windowRef);
+        dpViewObject(sf::RenderWindow& windowRef, float rod1Length, float rod2Length);
         void update(sf::Event& event);
         void draw();
 
@@ -69,4 +69,4 @@ class doublePendulum
         rodObject* rod2;
 };
 
-#endif // DOUBLE_PENDULUM 
+#endif // DP_VIEW
