@@ -33,6 +33,7 @@ int main()
             
             window.clear(background);
             dpObject.update(*event);
+            dpObject.draw();
             window.display();
         }
     }

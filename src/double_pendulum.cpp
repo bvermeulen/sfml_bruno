@@ -75,7 +75,6 @@ void bobObject::update(sf::Event& event)
 {
     selectObject(event);
     moveObject(event);
-    drawObject();
 }
 
 const float bobObject::getBobRadius() 
@@ -131,7 +130,6 @@ void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
     rodPoint2 = p2;
     radius1 = r1;
     radius2 = r2;
-    drawObject();
 }
 doublePendulum::doublePendulum(sf::RenderWindow& windowRef): window(windowRef)
 {
@@ -161,7 +159,7 @@ void doublePendulum::update(sf::Event& event)
     sf::Vector2f bob2Center = bob2->getBobCenter();
     float bob2Radius = bob2->getBobRadius();
     rod1->update(hingePointCenter, hingePointRadius, bob1Center, bob1Radius);
-    rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius); 
+    rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius);
 }
 
 void doublePendulum::draw()
