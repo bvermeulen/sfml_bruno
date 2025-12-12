@@ -127,6 +127,9 @@ rodObject::rodObject(
 }
 
 void rodObject::drawObject()
+/*
+Draw of rod up to the edge of the bobs, so that rod is not visible inside. 
+*/
 {   
     sf::Vector2f direction = rodPoint2 - rodPoint1;
     float length = sqrt(direction.x * direction.x + direction.y * direction.y) - radius1 - radius2;
@@ -194,24 +197,14 @@ void dpViewObject::update(sf::Event& event)
     {
         theta1 = calcTheta(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
         setBobPositions();
+        setRodPositions();
 
     }
     if (bob2->isMoving())
     {
         theta2 = calcTheta(window.mapPixelToCoords(sf::Mouse::getPosition(window)) - bob1->getBobCenter());
         setBobPositions();
-    }
-    if (bob1->isMoving() | bob2->isMoving())
-    {
-        setBobPositions();
-        sf::Vector2f hingePointCenter = hingePoint->getBobCenter();
-        float hingePointRadius = hingePoint->getBobRadius();
-        sf::Vector2f bob1Center = bob1->getBobCenter();
-        float bob1Radius = bob1->getBobRadius();
-        sf::Vector2f bob2Center = bob2->getBobCenter();
-        float bob2Radius = bob2->getBobRadius();
-        rod1->update(hingePointCenter, hingePointRadius, bob1Center, bob1Radius);
-        rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius);
+        setRodPositions();
     }
 }
 
@@ -222,6 +215,19 @@ void dpViewObject::setBobPositions()
     sf::Vector2f point2 = calcXY(rod2Length, theta2);
     point2 += point1;
     bob2->setBobCenter(point2);
+}
+
+void dpViewObject::setRodPositions()
+{
+    sf::Vector2f hingePointCenter = hingePoint->getBobCenter();
+    float hingePointRadius = hingePoint->getBobRadius();
+    sf::Vector2f bob1Center = bob1->getBobCenter();
+    float bob1Radius = bob1->getBobRadius();
+    sf::Vector2f bob2Center = bob2->getBobCenter();
+    float bob2Radius = bob2->getBobRadius();
+    rod1->update(hingePointCenter, hingePointRadius, bob1Center, bob1Radius);
+    rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius);
+    
 }
 
 void dpViewObject::draw()

@@ -77,6 +77,7 @@ class dpViewObject
         rodObject* rod1;
         rodObject* rod2;
         void setBobPositions();
+        void setRodPositions();
 };
 
 #endif // DP_VIEW
