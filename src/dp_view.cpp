@@ -3,13 +3,24 @@
 
 using namespace std;
 
+sf::Vector2f calcXY(float length, float theta)
+{
+    float x = length * sin(theta);
+    float y = - length * cos(theta);
+    return sf::Vector2f(x, y);
+}
+
+float calcTheta(sf::Vector2f point)
+{
+    return atan2(point.x, -point.y);
+}
+
 bobObject::bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color): window(windowRef)
 {
     bobColor = color;
     bobRadius = radius;
-    bobCenter = center;
     bobShape.setOrigin(sf::Vector2f(bobRadius, bobRadius));
-    bobShape.setPosition(bobCenter);
+    bobShape.setPosition(center);
     bobShape.setRadius(bobRadius);
     bobShape.setFillColor(bobColor);
     moving = false;
@@ -22,6 +33,7 @@ void bobObject::selectObject(sf::Event& event)
     {
         if (mouseButtonReleased->button == sf::Mouse::Button::Right)
         {
+            sf::Vector2f bobCenter = bobShape.getPosition();
             sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonReleased->position);
             sf::Vector2f distVector = mousePos - bobCenter;
             float distanceSquare = distVector.x * distVector.x + distVector.y * distVector.y;
@@ -50,7 +62,7 @@ void bobObject::moveObject(sf::Event& event)
         if (mouseButtonPressed->button == sf::Mouse::Button::Left)
         {
             sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonPressed->position);
-            sf::Vector2f distVector = mousePos - bobCenter;
+            sf::Vector2f distVector = mousePos - bobShape.getPosition();
             float distanceSquare = distVector.x * distVector.x + distVector.y * distVector.y;
             if (distanceSquare <= bobRadius * bobRadius)
             {
@@ -61,9 +73,7 @@ void bobObject::moveObject(sf::Event& event)
 
     if (moving && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        bobCenter = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-        bobShape.setPosition(bobCenter);
-        printf("object selected! (%.2f, %.2f)\n", bobCenter.x, bobCenter.y);
+        moving = true;
     }
     else
     {
@@ -84,7 +94,15 @@ const float bobObject::getBobRadius()
 
 const sf::Vector2f bobObject::getBobCenter()
 {
-    return bobCenter;
+    return bobShape.getPosition();
+}
+const bool bobObject::isMoving()
+{
+    return moving;
+}
+void bobObject::setBobCenter(sf::Vector2f point)
+{
+    bobShape.setPosition(point);
 }
 
 void bobObject::drawObject()
@@ -132,35 +150,78 @@ void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
     radius2 = r2;
 }
 
-dpViewObject::dpViewObject(sf::RenderWindow& windowRef, float rod1Length, float rod2Length): window(windowRef)
+dpViewObject::dpViewObject(
+    sf::RenderWindow& windowRef, 
+    float r1Length, float r2Length, 
+    float theta1Initial, float theta2Initial,
+    float bob1Radius, float bob2Radius,
+    sf::Color bob1Color, sf::Color bob2Color 
+): window(windowRef)
 {
     sf::Vector2f hingePointCenter = sf::Vector2f(0.0, 0.0);
     float hingePointRadius = 0.3;
-    sf::Vector2f bob1Center = sf::Vector2f(0.5, -2.5);
-    float bob1Radius = 0.6;
-    sf::Vector2f bob2Center = sf::Vector2f(-3.5, 2.0);
-    float bob2Radius = 1.0;
 
     hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
-    bob1 = new bobObject(window, bob1Center, bob1Radius, sf::Color::Yellow);
-    bob2 = new bobObject(window, bob2Center, bob2Radius, sf::Color::Green);
-    rod1 = new rodObject(window, hingePointCenter, hingePointRadius, bob1Center, bob1Radius, 0.1, sf::Color::Black);
-    rod2 = new rodObject(window, bob1Center, bob1Radius, bob2Center, bob2Radius, 0.1, sf::Color::Black);
+    bob1 = new bobObject(window, hingePointCenter, bob1Radius, bob1Color);
+    bob2 = new bobObject(window, hingePointCenter, bob2Radius, bob2Color);
+    
+    rod1Length = r1Length;
+    rod2Length = r2Length;
+    theta1 = theta1Initial * deg_rad;
+    theta2 = theta2Initial * deg_rad;
+    setBobPositions();
+    rod1 = new rodObject(
+        window, 
+        hingePointCenter, hingePointRadius, 
+        bob1->getBobCenter(), bob1Radius, 
+        0.1, sf::Color::Black
+    );
+    rod2 = new rodObject(
+        window, 
+        bob1->getBobCenter(), bob1Radius, 
+        bob2->getBobCenter(), bob2Radius, 
+        0.1, sf::Color::Black
+    );
+    draw();
 }
 
 void dpViewObject::update(sf::Event& event)
 {
-    hingePoint->update(event);
+    // hingePoint->update(event);
     bob1->update(event);
     bob2->update(event);
-    sf::Vector2f hingePointCenter = hingePoint->getBobCenter();
-    float hingePointRadius = hingePoint->getBobRadius();
-    sf::Vector2f bob1Center = bob1->getBobCenter();
-    float bob1Radius = bob1->getBobRadius();
-    sf::Vector2f bob2Center = bob2->getBobCenter();
-    float bob2Radius = bob2->getBobRadius();
-    rod1->update(hingePointCenter, hingePointRadius, bob1Center, bob1Radius);
-    rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius);
+    if (bob1->isMoving())
+    {
+        theta1 = calcTheta(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+        setBobPositions();
+
+    }
+    if (bob2->isMoving())
+    {
+        theta2 = calcTheta(window.mapPixelToCoords(sf::Mouse::getPosition(window)) - bob1->getBobCenter());
+        setBobPositions();
+    }
+    if (bob1->isMoving() | bob2->isMoving())
+    {
+        setBobPositions();
+        sf::Vector2f hingePointCenter = hingePoint->getBobCenter();
+        float hingePointRadius = hingePoint->getBobRadius();
+        sf::Vector2f bob1Center = bob1->getBobCenter();
+        float bob1Radius = bob1->getBobRadius();
+        sf::Vector2f bob2Center = bob2->getBobCenter();
+        float bob2Radius = bob2->getBobRadius();
+        rod1->update(hingePointCenter, hingePointRadius, bob1Center, bob1Radius);
+        rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius);
+    }
+}
+
+void dpViewObject::setBobPositions()
+{
+    sf::Vector2f point1 = calcXY(rod1Length, theta1);
+    bob1->setBobCenter(point1);
+    sf::Vector2f point2 = calcXY(rod2Length, theta2);
+    point2 += point1;
+    bob2->setBobCenter(point2);
 }
 
 void dpViewObject::draw()

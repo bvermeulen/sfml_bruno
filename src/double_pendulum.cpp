@@ -8,7 +8,7 @@ int main()
 {
     float width = 1250;
     float height = 750;
-    float xRange = 20;
+    float xRange = 30;
     float viewScale = xRange / width;
     printf("width = %.2f, height = %.2f, viewScale = %.2f\n", width, height, viewScale);
     sf::RenderWindow window(sf::VideoMode(sf::Vector2u(width, height)), "Double Pendulum!!");
@@ -18,8 +18,20 @@ int main()
     dpView.setCenter({0, 0});
     window.setView(dpView);
     float rod1Length = 3.0;
-    float rod2Length = 2.0;
-    dpViewObject dp = dpViewObject(window, rod1Length, rod2Length);
+    float rod2Length = 4.0;
+    float angledeg1 = +135;
+    float angledeg2 = +210;
+    float bob1Radius = 0.4;
+    float bob2Radius = 0.5;
+    sf::Color bob1Color = sf::Color::Yellow;
+    sf::Color bob2Color = sf::Color::Green;  
+    dpViewObject dp = dpViewObject(
+        window, 
+        rod1Length, rod2Length,
+        angledeg1, angledeg2, 
+        bob1Radius, bob2Radius,
+        bob1Color, bob2Color
+    );
 
     printf("Hello Double Pendulum!!\n");
     while (window.isOpen())

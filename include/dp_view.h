@@ -17,12 +17,14 @@ class bobObject
         void drawObject();
         const sf::Vector2f getBobCenter();
         const float getBobRadius();
+        const bool isMoving();
+        void setBobCenter(sf::Vector2f point);
 
     private:
         sf::RenderWindow& window;
         sf::CircleShape bobShape;
         sf::Color bobColor;
-        sf::Vector2f bobCenter;
+        // sf::Vector2f bobCenter;
         float bobRadius;
         bool moving;
         bool selected;
@@ -56,17 +58,25 @@ class rodObject
 class dpViewObject
 {
     public:
-        dpViewObject(sf::RenderWindow& windowRef, float rod1Length, float rod2Length);
+        dpViewObject(sf::RenderWindow& windowRef, 
+            float rod1Length, float rod2Length,
+            float theta1, float theta2,
+            float bob1Radius, float bob2Radius,
+            sf::Color bob1Color, sf::Color bob2Color 
+        );
         void update(sf::Event& event);
         void draw();
 
     private:
         sf::RenderWindow& window;
+        float rod1Length, rod2Length;
+        float theta1, theta2;
         bobObject* hingePoint;
         bobObject* bob1;
         bobObject* bob2;
         rodObject* rod1;
         rodObject* rod2;
+        void setBobPositions();
 };
 
 #endif // DP_VIEW
