@@ -5,7 +5,8 @@ enable_language(C CXX)
 
 set(sources
     double_pendulum.cpp
-    dp_view.cpp
+    double_pendulum_sim.cpp
+    double_pendulum_view.cpp
 )
 
 set(CMAKE_PREFIX_PATH "d:/cpp/SFML-3.0.2")

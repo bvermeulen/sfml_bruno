@@ -1,5 +1,5 @@
 #include <cmath>
-#include <dp_view.h>
+#include <double_pendulum_view.h>
 
 using namespace std;
 
@@ -15,8 +15,9 @@ float calcTheta(sf::Vector2f point)
     return atan2(point.x, -point.y);
 }
 
-bobObject::bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color): window(windowRef)
+bobObject::bobObject(sf::RenderWindow* windowRef, sf::Vector2f center, float radius, sf::Color color)
 {
+    window = windowRef;
     bobColor = color;
     bobRadius = radius;
     bobShape.setOrigin(sf::Vector2f(bobRadius, bobRadius));
@@ -34,7 +35,7 @@ void bobObject::selectObject(sf::Event& event)
         if (mouseButtonReleased->button == sf::Mouse::Button::Right)
         {
             sf::Vector2f bobCenter = bobShape.getPosition();
-            sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonReleased->position);
+            sf::Vector2f mousePos = window->mapPixelToCoords(mouseButtonReleased->position);
             sf::Vector2f distVector = mousePos - bobCenter;
             float distanceSquare = distVector.x * distVector.x + distVector.y * distVector.y;
             bool withinBob = distanceSquare <= bobRadius * bobRadius;
@@ -61,7 +62,7 @@ void bobObject::moveObject(sf::Event& event)
     {
         if (mouseButtonPressed->button == sf::Mouse::Button::Left)
         {
-            sf::Vector2f mousePos = window.mapPixelToCoords(mouseButtonPressed->position);
+            sf::Vector2f mousePos = window->mapPixelToCoords(mouseButtonPressed->position);
             sf::Vector2f distVector = mousePos - bobShape.getPosition();
             float distanceSquare = distVector.x * distVector.x + distVector.y * distVector.y;
             if (distanceSquare <= bobRadius * bobRadius)
@@ -107,16 +108,16 @@ void bobObject::setBobCenter(sf::Vector2f point)
 
 void bobObject::drawObject()
 {
-    window.draw(bobShape);
+    window->draw(bobShape);
 }
 
 rodObject::rodObject(
-    sf::RenderWindow& windowRef, 
+    sf::RenderWindow* windowRef, 
     sf::Vector2f p1, float r1, 
     sf::Vector2f p2, float r2, 
-    float width, sf::Color color): 
-    window(windowRef)
+    float width, sf::Color color)
 {
+    window = windowRef;
     rodColor = color;
     rodWidth = width;
     rodPoint1 = p1;
@@ -142,7 +143,7 @@ Draw of rod up to the edge of the bobs, so that rod is not visible inside.
     rodShape.setPosition(center);
     rodShape.setRotation(sf::radians(angle));
     
-    rodObject::window.draw(rodShape);
+    window->draw(rodShape);
 }
 
 void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
@@ -154,16 +155,16 @@ void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
 }
 
 dpViewObject::dpViewObject(
-    sf::RenderWindow& windowRef, 
+    sf::RenderWindow* windowRef, 
     float r1Length, float r2Length, 
     float theta1Initial, float theta2Initial,
     float bob1Radius, float bob2Radius,
     sf::Color bob1Color, sf::Color bob2Color 
-): window(windowRef)
+)
 {
+    window = windowRef;
     sf::Vector2f hingePointCenter = sf::Vector2f(0.0, 0.0);
     float hingePointRadius = 0.3;
-
     hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
     bob1 = new bobObject(window, hingePointCenter, bob1Radius, bob1Color);
     bob2 = new bobObject(window, hingePointCenter, bob2Radius, bob2Color);
@@ -195,14 +196,14 @@ void dpViewObject::update(sf::Event& event)
     bob2->update(event);
     if (bob1->isMoving())
     {
-        theta1 = calcTheta(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+        theta1 = calcTheta(window->mapPixelToCoords(sf::Mouse::getPosition((*window))));
         setBobPositions();
         setRodPositions();
 
     }
     if (bob2->isMoving())
     {
-        theta2 = calcTheta(window.mapPixelToCoords(sf::Mouse::getPosition(window)) - bob1->getBobCenter());
+        theta2 = calcTheta(window->mapPixelToCoords(sf::Mouse::getPosition((*window))) - bob1->getBobCenter());
         setBobPositions();
         setRodPositions();
     }
@@ -232,10 +233,10 @@ void dpViewObject::setRodPositions()
 
 void dpViewObject::draw()
 {
-    rod1->drawObject();
-    rod2->drawObject();
     hingePoint->drawObject();
     bob1->drawObject();
     bob2->drawObject();
+    rod1->drawObject();
+    rod2->drawObject();
 }
 
