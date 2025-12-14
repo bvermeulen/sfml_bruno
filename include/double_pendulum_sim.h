@@ -6,18 +6,19 @@
 
 using namespace std;
 
+sf::RenderWindow createWindow();
+
 class doublependulumSim
 {
     public:
-        doublependulumSim();
+        doublependulumSim(sf::RenderWindow& windowRef);
         ~doublependulumSim();
         void running();
 
     private:
-        sf::RenderWindow* window;
-        sf::Vector2f windowSize;
+        sf::RenderWindow& window;
         string title;
-        sf::VideoMode vm;
+        sf::Vector2f windowSize;
         sf::Color backgroundColor;
         dpViewObject *dpv;
 

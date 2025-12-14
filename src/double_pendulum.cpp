@@ -5,6 +5,7 @@ using namespace std;
 
 int main()
 {
-    doublependulumSim *dpSim = new doublependulumSim();
+    sf::RenderWindow window = createWindow();
+    doublependulumSim *dpSim = new doublependulumSim(window);
     dpSim->running();
 }

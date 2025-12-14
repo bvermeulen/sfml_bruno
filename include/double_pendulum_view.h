@@ -12,7 +12,7 @@ const float deg_rad = 180.0 / PI;
 class bobObject
 {
     public:
-        bobObject(sf::RenderWindow* windowRef, sf::Vector2f center, float radius, sf::Color color);
+        bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color);
         void update(sf::Event& event);
         void drawObject();
         const sf::Vector2f getBobCenter();
@@ -21,7 +21,7 @@ class bobObject
         void setBobCenter(sf::Vector2f point);
 
     private:
-        sf::RenderWindow* window;
+        sf::RenderWindow& window;
         sf::CircleShape bobShape;
         sf::Color bobColor;
         // sf::Vector2f bobCenter;
@@ -37,7 +37,7 @@ class rodObject
 {
     public:
         rodObject(
-            sf::RenderWindow* windowRef, 
+            sf::RenderWindow& windowRef, 
             sf::Vector2f p1, float r1, 
             sf::Vector2f p2, float r2, 
             float width, sf::Color color);
@@ -45,7 +45,7 @@ class rodObject
         void drawObject();
 
     private:
-        sf::RenderWindow* window;
+        sf::RenderWindow& window;
         sf::Color rodColor;
         float rodWidth;
         sf::Vector2f rodPoint1;
@@ -59,7 +59,7 @@ class dpViewObject
 {
     public:
         dpViewObject(
-            sf::RenderWindow* window, 
+            sf::RenderWindow& windowRef, 
             float rod1Length, float rod2Length,
             float theta1, float theta2,
             float bob1Radius, float bob2Radius,
@@ -69,7 +69,7 @@ class dpViewObject
         void draw();
 
     private:
-        sf::RenderWindow* window;
+        sf::RenderWindow& window;
         float rod1Length, rod2Length;
         float theta1, theta2;
         bobObject* hingePoint;

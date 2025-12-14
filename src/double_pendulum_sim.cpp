@@ -3,20 +3,26 @@
 
 using namespace std;
 
+sf::RenderWindow createWindow()
+{
+    sf::VideoMode vm = sf::VideoMode(sf::Vector2u(1250, 750));
+    sf::RenderWindow window = sf::RenderWindow(vm, "");
+    return window;
+}
+
 void doublependulumSim::initWindow()
 {
     title = "Double Pendulum!!";
-    windowSize.x = 1250;
-    windowSize.y = 750;
+    window.setTitle(title);
+    windowSize.x = window.getSize().x;
+    windowSize.y = window.getSize().y;
     float xRange = 30;
     float viewScale = xRange / windowSize.x;
     backgroundColor = sf::Color(100,100,100);
-    vm = sf::VideoMode(sf::Vector2u(windowSize));
-    window = new sf::RenderWindow(vm, title);
     sf::View dpView;
     dpView.setSize(viewScale * sf::Vector2f(windowSize.x, -windowSize.y));
     dpView.setCenter({0, 0});
-    window->setView(dpView);
+    window.setView(dpView);
     printf("width = %.2f, height = %.2f, viewScale = %.2f\n", windowSize.x, windowSize.y, viewScale);
 }
 
@@ -41,43 +47,43 @@ void doublependulumSim::initDoublePendulum()
 
 void doublependulumSim::pollEvents() 
 {
-    while (optional event = window->pollEvent())
+    while (optional event = window.pollEvent())
     {
         if (event->is<sf::Event::Closed>())
-            window->close();
+            window.close();
         updating(*event);
     }
 }
 
 void doublependulumSim::updating(sf::Event& event)
 {
-    window->clear(backgroundColor);
+    window.clear(backgroundColor);
     dpv->update(event);
     rendering();
-    window->display();
+    window.display();
 }
 
 void doublependulumSim::rendering()
 {
-    window->clear(backgroundColor);
+    window.clear(backgroundColor);
     dpv->draw();
-    window->display();
+    window.display();
 }
 
 void doublependulumSim::running()
 {
     printf("Running app: %s\n", title.c_str());
-    while (window->isOpen())
+    while (window.isOpen())
     {
-        window->clear(backgroundColor);
+        window.clear(backgroundColor);
         dpv->draw();
-        window->display();
+        window.display();
         rendering();
         pollEvents();
     }
 }
 
-doublependulumSim::doublependulumSim()
+doublependulumSim::doublependulumSim(sf::RenderWindow& windowRef) : window(windowRef)
 {
     initWindow();
     initDoublePendulum();
@@ -86,5 +92,4 @@ doublependulumSim::doublependulumSim()
 doublependulumSim::~doublependulumSim()
 {
     delete dpv;
-    delete window;
 }
