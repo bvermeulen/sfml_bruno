@@ -88,7 +88,7 @@
             "justMyCode": true
         },
         {
-            "name": "C/C++: g++.exe build and debug active file",
+            "name": "Debug active file",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
@@ -98,6 +98,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            "preLaunchTask": "g++: build active file",
             "miDebuggerPath": "D:/cpp/msys64/mingw64/bin/gdb.exe",
             "setupCommands": [
                 {
@@ -111,7 +112,6 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe build active file"
         }
     ]
 }

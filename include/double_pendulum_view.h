@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -55,6 +56,31 @@ class rodObject
         sf::RectangleShape rodShape;
 };
 
+class traceLine
+{
+    public:
+        traceLine(
+            sf:: RenderWindow& windowRef,
+            float traceWidth,
+            sf::Color traceColor
+        );
+
+        void addPoint(sf::Vector2f point);
+        void draw();
+        void setTraceOn();
+        void resetTraceOn();
+        
+    private:
+        sf::RenderWindow& window;
+        float traceWidth;
+        sf::Color traceColor;
+        vector<sf::Vector2f> tracePoints;
+        sf::RectangleShape traceShape;
+        bool traceOn;
+
+    };
+
+
 class dpViewObject
 {
     public:
@@ -79,6 +105,7 @@ class dpViewObject
         rodObject* rod2;
         void setBobPositions();
         void setRodPositions();
+        traceLine* trace;
 };
 
 #endif // DOUBLE_PENDULUM_VIEW

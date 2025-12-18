@@ -5,17 +5,17 @@ using namespace std;
 
 sf::RenderWindow createWindow()
 {
-    sf::VideoMode vm = sf::VideoMode(sf::Vector2u(1250, 750));
-    sf::RenderWindow window = sf::RenderWindow(vm, "");
+    sf::RenderWindow window;
     return window;
 }
 
 void doublependulumSim::initWindow()
 {
     title = "Double Pendulum!!";
-    window.setTitle(title);
-    windowSize.x = window.getSize().x;
-    windowSize.y = window.getSize().y;
+    windowSize.x = 1250;
+    windowSize.y = 750;
+    sf::VideoMode vm = sf::VideoMode(sf::Vector2u(windowSize.x, windowSize.y));
+    window.create(vm, title);
     float xRange = 30;
     float viewScale = xRange / windowSize.x;
     backgroundColor = sf::Color(100,100,100);
@@ -23,6 +23,7 @@ void doublependulumSim::initWindow()
     dpView.setSize(viewScale * sf::Vector2f(windowSize.x, -windowSize.y));
     dpView.setCenter({0, 0});
     window.setView(dpView);
+    // window.setFramerateLimit(60);
     printf("width = %.2f, height = %.2f, viewScale = %.2f\n", windowSize.x, windowSize.y, viewScale);
 }
 
@@ -51,6 +52,7 @@ void doublependulumSim::pollEvents()
     {
         if (event->is<sf::Event::Closed>())
             window.close();
+
         updating(*event);
     }
 }
@@ -60,7 +62,6 @@ void doublependulumSim::updating(sf::Event& event)
     window.clear(backgroundColor);
     dpv->update(event);
     rendering();
-    window.display();
 }
 
 void doublependulumSim::rendering()

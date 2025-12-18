@@ -152,6 +152,55 @@ void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
     radius2 = r2;
 }
 
+traceLine::traceLine(sf::RenderWindow& windowRef, float width, sf::Color color) : window(windowRef)
+{
+    traceWidth = width;
+    traceColor = color;
+    traceOn = false;
+    traceShape.setFillColor(traceColor);
+}
+
+void traceLine::setTraceOn()
+{
+    traceOn = true;
+    tracePoints.clear();
+}
+
+void traceLine::resetTraceOn()
+{
+    traceOn = false;
+}
+
+void traceLine::addPoint(sf::Vector2f point)
+{
+    if (traceOn) {
+        tracePoints.emplace_back(point);
+        printf("size of tracePoint: %lli\n", tracePoints.size());
+    }
+}
+
+void traceLine::draw()
+{
+    if ((tracePoints.size() < 2) | (!traceOn)) return;
+
+    sf::Vector2f p1 = tracePoints[0];
+    for (unsigned long long i=1; i < tracePoints.size(); i++)
+    {
+        sf::Vector2f p2 = tracePoints[i];
+        sf::Vector2f direction = p2 - p1;
+        float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+        float angle = atan2(direction.y, direction.x);
+        traceShape.setSize(sf::Vector2f(length, traceWidth));
+        traceShape.setOrigin(sf::Vector2f(length * 0.5, traceWidth * 0.5));
+        sf::Vector2f center = (p1 + p2) * 0.5f;
+        traceShape.setPosition(center);
+        traceShape.setRotation(sf::radians(angle));
+        
+        window.draw(traceShape);
+        p1 = p2;
+    }
+}
+
 dpViewObject::dpViewObject(
     sf::RenderWindow& windowRef, 
     float r1Length, float r2Length, 
@@ -183,11 +232,18 @@ dpViewObject::dpViewObject(
         bob2->getBobCenter(), bob2Radius, 
         0.1, sf::Color::Black
     );
+    trace = new traceLine(window, 0.05, sf::Color(150,150,150));
     draw();
 }
 
 void dpViewObject::update(sf::Event& event)
 {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T))
+        trace->setTraceOn();
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R))
+        trace->resetTraceOn();
+
     // hingePoint->update(event);
     bob1->update(event);
     bob2->update(event);
@@ -225,7 +281,7 @@ void dpViewObject::setRodPositions()
     float bob2Radius = bob2->getBobRadius();
     rod1->update(hingePointCenter, hingePointRadius, bob1Center, bob1Radius);
     rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius);
-    
+    trace->addPoint(bob2Center);
 }
 
 void dpViewObject::draw()
@@ -235,5 +291,6 @@ void dpViewObject::draw()
     bob2->drawObject();
     rod1->drawObject();
     rod2->drawObject();
+    trace->draw();
 }
 

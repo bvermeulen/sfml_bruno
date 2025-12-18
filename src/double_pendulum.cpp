@@ -1,11 +1,8 @@
-#include <SFML/Graphics.hpp>
-#include <double_pendulum_sim.h>
-
-using namespace std;
+#include "double_pendulum_sim.h" 
 
 int main()
 {
     sf::RenderWindow window = createWindow();
-    doublependulumSim *dpSim = new doublependulumSim(window);
-    dpSim->running();
+    doublependulumSim dpSim = doublependulumSim(window);
+    dpSim.running();
 }
