@@ -87,7 +87,7 @@ void bobObject::update(sf::Event& event)
     moveObject(event);
 }
 
-const float bobObject::getBobRadius() 
+const float bobObject::getBobRadius()
 {
     return bobRadius;
 }
@@ -111,9 +111,9 @@ void bobObject::drawObject()
 }
 
 rodObject::rodObject(
-    sf::RenderWindow& windowRef, 
-    sf::Vector2f p1, float r1, 
-    sf::Vector2f p2, float r2, 
+    sf::RenderWindow& windowRef,
+    sf::Vector2f p1, float r1,
+    sf::Vector2f p2, float r2,
     float width, sf::Color color) : window(windowRef)
 {
     rodColor = color;
@@ -127,9 +127,9 @@ rodObject::rodObject(
 
 void rodObject::drawObject()
 /*
-Draw of rod up to the edge of the bobs, so that rod is not visible inside. 
+Draw of rod up to the edge of the bobs, so that rod is not visible inside.
 */
-{   
+{
     sf::Vector2f direction = rodPoint2 - rodPoint1;
     float length = sqrt(direction.x * direction.x + direction.y * direction.y) - radius1 - radius2;
     float angle = atan2(direction.y, direction.x);
@@ -140,7 +140,7 @@ Draw of rod up to the edge of the bobs, so that rod is not visible inside.
     sf::Vector2f center = (p1 + p2) * 0.5f;
     rodShape.setPosition(center);
     rodShape.setRotation(sf::radians(angle));
-    
+
     window.draw(rodShape);
 }
 
@@ -175,7 +175,7 @@ void traceLine::addPoint(sf::Vector2f point)
 {
     if (traceOn) {
         tracePoints.emplace_back(point);
-        printf("size of tracePoint: %lli\n", tracePoints.size());
+        printf("size of tracePoint: %lu\n", tracePoints.size());
     }
 }
 
@@ -195,18 +195,18 @@ void traceLine::draw()
         sf::Vector2f center = (p1 + p2) * 0.5f;
         traceShape.setPosition(center);
         traceShape.setRotation(sf::radians(angle));
-        
+
         window.draw(traceShape);
         p1 = p2;
     }
 }
 
 dpViewObject::dpViewObject(
-    sf::RenderWindow& windowRef, 
-    float r1Length, float r2Length, 
+    sf::RenderWindow& windowRef,
+    float r1Length, float r2Length,
     float theta1Initial, float theta2Initial,
     float bob1Radius, float bob2Radius,
-    sf::Color bob1Color, sf::Color bob2Color 
+    sf::Color bob1Color, sf::Color bob2Color
 ): window(windowRef)
 {
     sf::Vector2f hingePointCenter = sf::Vector2f(0.0, 0.0);
@@ -214,22 +214,22 @@ dpViewObject::dpViewObject(
     hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
     bob1 = new bobObject(window, hingePointCenter, bob1Radius, bob1Color);
     bob2 = new bobObject(window, hingePointCenter, bob2Radius, bob2Color);
-    
+
     rod1Length = r1Length;
     rod2Length = r2Length;
     theta1 = theta1Initial * deg_rad;
     theta2 = theta2Initial * deg_rad;
     setBobPositions();
     rod1 = new rodObject(
-        window, 
-        hingePointCenter, hingePointRadius, 
-        bob1->getBobCenter(), bob1Radius, 
+        window,
+        hingePointCenter, hingePointRadius,
+        bob1->getBobCenter(), bob1Radius,
         0.1, sf::Color::Black
     );
     rod2 = new rodObject(
-        window, 
-        bob1->getBobCenter(), bob1Radius, 
-        bob2->getBobCenter(), bob2Radius, 
+        window,
+        bob1->getBobCenter(), bob1Radius,
+        bob2->getBobCenter(), bob2Radius,
         0.1, sf::Color::Black
     );
     trace = new traceLine(window, 0.05, sf::Color(150,150,150));
