@@ -6,6 +6,7 @@ enable_language(C CXX)
 set(sources
     double_pendulum.cpp
     double_pendulum_sim.cpp
+    double_pendulum_physics.cpp
     double_pendulum_view.cpp
 )
 

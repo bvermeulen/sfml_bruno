@@ -1,5 +1,6 @@
-#include <cmath>
+#include <double_pendulum_constants.h>
 #include <double_pendulum_view.h>
+#include <cmath>
 
 using namespace std;
 
@@ -175,7 +176,10 @@ void traceLine::addPoint(sf::Vector2f point)
 {
     if (traceOn) {
         tracePoints.emplace_back(point);
-        printf("size of tracePoint: %lli\n", tracePoints.size());
+    }
+    if (tracePoints.size() > traceLength)
+    {
+        tracePoints.erase(tracePoints.begin());
     }
 }
 
@@ -211,14 +215,16 @@ dpViewObject::dpViewObject(
 {
     sf::Vector2f hingePointCenter = sf::Vector2f(0.0, 0.0);
     float hingePointRadius = 0.3;
+    bob1Radius *= 0.1;
+    bob2Radius *= 0.1;
     hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
     bob1 = new bobObject(window, hingePointCenter, bob1Radius, bob1Color);
     bob2 = new bobObject(window, hingePointCenter, bob2Radius, bob2Color);
     
     rod1Length = r1Length;
     rod2Length = r2Length;
-    theta1 = theta1Initial * deg_rad;
-    theta2 = theta2Initial * deg_rad;
+    theta1 = theta1Initial;
+    theta2 = theta2Initial;
     setBobPositions();
     rod1 = new rodObject(
         window, 
@@ -260,6 +266,19 @@ void dpViewObject::update(sf::Event& event)
         setBobPositions();
         setRodPositions();
     }
+}
+
+void dpViewObject::updateThetas(float t1, float t2)
+{
+    theta1 = t1;
+    theta2 = t2;
+    setBobPositions();
+    setRodPositions();
+}
+
+sf::Vector2f dpViewObject::getThetas()
+{
+    return sf::Vector2f(theta1, theta2);
 }
 
 void dpViewObject::setBobPositions()

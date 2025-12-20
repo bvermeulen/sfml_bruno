@@ -1,14 +1,11 @@
 #ifndef DOUBLE_PENDULUM_VIEW
 #define DOUBLE_PENDULUM_VIEW
 
+#include <double_pendulum_view.h>
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include <vector>
 
 using namespace std;
-
-const float PI = acos(-1.0);
-const float deg_rad = 180.0 / PI;
 
 class bobObject
 {
@@ -80,7 +77,6 @@ class traceLine
 
     };
 
-
 class dpViewObject
 {
     public:
@@ -92,6 +88,8 @@ class dpViewObject
             sf::Color bob1Color, sf::Color bob2Color 
         );
         void update(sf::Event& event);
+        void updateThetas(float t1, float t2);
+        sf::Vector2f getThetas();
         void draw();
 
     private:

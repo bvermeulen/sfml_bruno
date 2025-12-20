@@ -12,6 +12,7 @@
                 "--std=c++23",
                 "${workspaceFolder}/src/double_pendulum.cpp",
                 "${workspaceFolder}/src/double_pendulum_sim.cpp",
+                "${workspaceFolder}/src/double_pendulum_physics.cpp",
                 "${workspaceFolder}/src/double_pendulum_view.cpp",
                 "-o",
                 "${workspaceFolder}/bin/debug/double_pendulum_dbg.exe",
