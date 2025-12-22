@@ -4,7 +4,8 @@
             "name": "gcc",
             "includePath": [
                 "${workspaceFolder}/include",
-                "d:/cpp/SFML-3.0.2/include"
+                "d:/cpp/SFML-3.0.2/include",
+                "d:/cpp/boost_1_90_0"
             ],
             "defines": [
                 "_DEBUG",

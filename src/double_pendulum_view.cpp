@@ -215,8 +215,8 @@ dpViewObject::dpViewObject(
 {
     sf::Vector2f hingePointCenter = sf::Vector2f(0.0, 0.0);
     float hingePointRadius = 0.3;
-    bob1Radius *= 0.1;
-    bob2Radius *= 0.1;
+    bob1Radius *= 0.05;
+    bob2Radius *= 0.05;
     hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
     bob1 = new bobObject(window, hingePointCenter, bob1Radius, bob1Color);
     bob2 = new bobObject(window, hingePointCenter, bob2Radius, bob2Color);

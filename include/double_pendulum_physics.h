@@ -2,41 +2,45 @@
 #define DOUBLE_PENDULUM_PHYSICS
 
 struct result {
-    float theta1;
-    float theta2;
-    float time;
+    double theta1;
+    double theta2;
+    double time;
 };
 
 class doublependulumPhysics
 {
     public:
         doublependulumPhysics(
-            float b1Weight, float r1Length,
-            float b2Weight, float r2Length,
-            float initalTheta1, float initialTheta2,
-            float df, float dt
+            double b1Weight, double r1Length,
+            double b2Weight, double r2Length,
+            double initalTheta1, double initialTheta2,
+            double df1, double df2, double dt
         );
   
-        void setThetas(float t1, float t2);
-        void calcThetas();
+        void setThetas(double t1, double t2);
+        void updateThetasEuler();
+        void updateThetasRK4();
         result getResult();
 
     private:
-        float bob1Weight;
-        float rod1Length;
-        float bob2Weight;
-        float rod2Length;
+        double bob1Weight;
+        double rod1Length;
+        double bob2Weight;
+        double rod2Length;
         double theta1;
         double theta2;
         double theta1Dot;
         double theta2Dot;
         double theta1DoubleDot;
         double theta2DoubleDot;
-        float deltaT;
-        float dampingFactor;
-        float time;
+        double deltaT;
+        double dampingFactor1;
+        double dampingFactor2;
+        double time;
 
-        void calcThetasDoubleDot();
+        void calcThetasDoubleDotMethod1(double t1, double t2);
+        void calcThetasDoubleDotMethod2(double t1, double t2);
+
 };
 
 #endif // DOUBLE_PENDULUM_PHYICS

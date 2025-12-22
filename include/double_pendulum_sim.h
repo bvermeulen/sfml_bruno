@@ -24,20 +24,22 @@ class doublependulumSim
         dpViewObject *dpv;
         doublependulumPhysics *dpp;
 
-        float rod1Length;
-        float rod2Length;
-        float angledeg1;
-        float angledeg2;
-        float bob1Weight;
-        float bob2Weight;
-        float dampingFactor;
-        float deltaT;
+        double rod1Length;
+        double rod2Length;
+        double angledeg1;
+        double angledeg2;
+        double bob1Weight;
+        double bob2Weight;
+        double dampingFactor1;
+        double dampingFactor2;
+        double deltaT;
         sf::Clock clock;
 
         bool started;
         bool paused;
         result result;
-        float timeSim;
+        double timeSim;
+        double timeFrame;
 
         void initWindow();
         void initDoublePendulum();

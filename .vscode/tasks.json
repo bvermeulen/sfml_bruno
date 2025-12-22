@@ -63,17 +63,16 @@
         },
         {
             "type": "shell",
-            "label": "DEBUG elastic_bobs",
+            "label": "DEBUG move_weight",
             "command": "D:/cpp/mingw64/bin/g++.exe",
             "args": [
                 "-Wall",
                 "-g",
                 "-fvisibility=hidden",
                 "--std=c++17",
-                "${workspaceFolder}/src/elastic_bobs.cpp",
-                "${workspaceFolder}/src/bobs_view.cpp",
+                "${workspaceFolder}/src/move_weight.cpp",
                 "-o",
-                "${workspaceFolder}/bin/debug/elastic_bobs_dbg.exe",
+                "${workspaceFolder}/bin/debug/move_weight_dbg.exe",
                 "-I${workspaceFolder}/include",
                 "-Id:/cpp/SFML-3.0.2/include",
                 "-Ld:/cpp/SFML-3.0.2/lib",
@@ -92,22 +91,18 @@
         },
         {
             "type": "shell",
-            "label": "DEBUG move_weight",
+            "label": "DEBUG boost example",
             "command": "D:/cpp/mingw64/bin/g++.exe",
             "args": [
                 "-Wall",
                 "-g",
                 "-fvisibility=hidden",
                 "--std=c++17",
-                "${workspaceFolder}/src/move_weight.cpp",
+                "${workspaceFolder}/src/boost_adaptive.cpp",
                 "-o",
-                "${workspaceFolder}/bin/debug/move_weight_dbg.exe",
+                "${workspaceFolder}/bin/debug/boost_adaptive_dbg.exe",
                 "-I${workspaceFolder}/include",
-                "-Id:/cpp/SFML-3.0.2/include",
-                "-Ld:/cpp/SFML-3.0.2/lib",
-                "-lsfml-graphics",
-                "-lsfml-system",
-                "-lsfml-window"
+                "-Id:/cpp/boost_1_90_0"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

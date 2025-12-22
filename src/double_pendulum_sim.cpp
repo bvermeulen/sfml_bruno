@@ -33,12 +33,13 @@ void doublependulumSim::initDoublePendulum()
 {
     rod1Length = 5.0;
     rod2Length = 2.5;
+    bob1Weight = 10.0;
+    bob2Weight = 5.0;
     angledeg1 = -157.08; // +120; // -157.08
     angledeg2 = +157.35; // +157.35
-    bob1Weight = 5.0;
-    bob2Weight = 2.5;
-    dampingFactor = 0.0;
-    deltaT = 0.001;
+    dampingFactor1 = 0.0;
+    dampingFactor2 = 0.0;
+    deltaT = 0.00005;
     sf::Color bob1Color = sf::Color::Yellow;
     sf::Color bob2Color = sf::Color::Green;
 
@@ -53,11 +54,13 @@ void doublependulumSim::initDoublePendulum()
         bob1Weight, rod1Length,
         bob2Weight, rod2Length,
         angledeg1 * deg_rad, angledeg2 * deg_rad,
-        dampingFactor, deltaT
+        dampingFactor1, dampingFactor2, deltaT
     );
 
     started = false;
     paused = false;
+    timeSim = 0.0;
+    timeFrame = 0.0;
 }
 
 void doublependulumSim::pollEvents() 
@@ -96,22 +99,42 @@ void doublependulumSim::rendering()
 
 void doublependulumSim::running()
 {
-    sf::Time elapsedTime;
+    // sf::Time elapsedTime;
+    long int elapsedTime;
+    int count = 0;
     printf("Running app: %s\n", title.c_str());
+    int c = 0;
     while (window.isOpen())
     {
         if (started && !paused) 
         {
-            elapsedTime = clock.getElapsedTime();
-            if (elapsedTime.asMilliseconds() > timeSim * 1000)
+            elapsedTime = clock.getElapsedTime().asMicroseconds();
+            if (elapsedTime > timeSim * million)
             {
-                dpp->calcThetas();
+                c++;
+                dpp->updateThetasRK4();
+                timeSim += deltaT;
+                if (c == 10000) 
+                {
+                    printf("et: %li, ts: %.2f\n", elapsedTime, timeSim);
+                    c = 0;
+                }
+            }
+            
+            if (elapsedTime > timeFrame * million)
+            {
+                count++;
                 result = dpp->getResult();
                 angledeg1 = result.theta1 * rad_deg;
                 angledeg2 = result.theta2 * rad_deg;
-                timeSim = result.time;
                 dpv->updateThetas(result.theta1, result.theta2);
                 rendering();
+                timeFrame += frameRate;
+                if (count == 30)
+                {
+                    printf("time: %.4f\n", timeFrame);
+                    count = 0;
+                }
             }
         }
 
@@ -139,6 +162,7 @@ void doublependulumSim::startSim()
     dpp->setThetas(thetas.x, thetas.y);
     started = true;
     timeSim = 0.0;
+    timeFrame = 0.0;
     clock.restart();
 }
 
