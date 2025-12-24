@@ -83,7 +83,7 @@
             "name": "Debug boost example",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/debug/boost_adaptive_dbg.exe",
+            "program": "${workspaceFolder}/bin/debug/boost_rk4_dbg.exe",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",

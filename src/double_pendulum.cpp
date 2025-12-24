@@ -3,6 +3,6 @@
 int main()
 {
     sf::RenderWindow window = createWindow();
-    doublependulumSim dpSim = doublependulumSim(window);
+    DoublependulumSim dpSim = DoublependulumSim(window);
     dpSim.running();
 }

@@ -9,21 +9,21 @@ using namespace std;
 
 sf::RenderWindow createWindow();
 
-class doublependulumSim
+class DoublependulumSim
 {
     public:
-        doublependulumSim(sf::RenderWindow& windowRef);
-        ~doublependulumSim();
+        DoublependulumSim(sf::RenderWindow& windowRef);
         void running();
-
+        void exitSim();
+    
     private:
         sf::RenderWindow& window;
         string title;
         sf::Vector2f windowSize;
         sf::Color backgroundColor;
-        dpViewObject *dpv;
-        doublependulumPhysics *dpp;
-
+        DoublependulumViewObject *dpv;
+        DoublependulumPhysics *dpp;
+        
         double rod1Length;
         double rod2Length;
         double angledeg1;

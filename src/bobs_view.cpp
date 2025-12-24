@@ -3,7 +3,7 @@
 
 using namespace std;
 
-bobObject::bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color): window(windowRef)
+BobObject::BobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color): window(windowRef)
 {
     bobColor = color;
     bobRadius = radius;
@@ -16,7 +16,9 @@ bobObject::bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float rad
     selected = false;
 }
 
-void bobObject::selectObject(sf::Event& event)
+BobObject::~BobObject() {}
+
+void BobObject::selectObject(sf::Event& event)
 {
     if (const auto* mouseButtonReleased = event.getIf<sf::Event::MouseButtonReleased>())
     {
@@ -43,7 +45,7 @@ void bobObject::selectObject(sf::Event& event)
     }
 }
 
-void bobObject::moveObject(sf::Event& event)
+void BobObject::moveObject(sf::Event& event)
 {
     if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
     {
@@ -71,28 +73,28 @@ void bobObject::moveObject(sf::Event& event)
     }
 }
 
-void bobObject::update(sf::Event& event)
+void BobObject::update(sf::Event& event)
 {
     selectObject(event);
     moveObject(event);
 }
 
-const float bobObject::getBobRadius() 
+const float BobObject::getBobRadius() 
 {
     return bobRadius;
 }
 
-const sf::Vector2f bobObject::getBobCenter()
+const sf::Vector2f BobObject::getBobCenter()
 {
     return bobCenter;
 }
 
-void bobObject::drawObject()
+void BobObject::drawObject()
 {
     window.draw(bobShape);
 }
 
-rodObject::rodObject(
+RodObject::RodObject(
     sf::RenderWindow& windowRef, 
     sf::Vector2f p1, float r1, 
     sf::Vector2f p2, float r2, 
@@ -108,7 +110,9 @@ rodObject::rodObject(
     rodShape.setFillColor(rodColor);
 }
 
-void rodObject::drawObject()
+RodObject::~RodObject() {}
+
+void RodObject::drawObject()
 {   
     sf::Vector2f direction = rodPoint2 - rodPoint1;
     float length = sqrt(direction.x * direction.x + direction.y * direction.y) - radius1 - radius2;
@@ -121,17 +125,17 @@ void rodObject::drawObject()
     rodShape.setPosition(center);
     rodShape.setRotation(sf::radians(angle));
     
-    rodObject::window.draw(rodShape);
+    RodObject::window.draw(rodShape);
 }
 
-void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
+void RodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
 {
     rodPoint1 = p1;
     rodPoint2 = p2;
     radius1 = r1;
     radius2 = r2;
 }
-bobsViewObject::bobsViewObject(sf::RenderWindow& windowRef): window(windowRef)
+BobsViewObject::BobsViewObject(sf::RenderWindow& windowRef): window(windowRef)
 {
     sf::Vector2f hingePointCenter = sf::Vector2f(0.0, 0.0);
     float hingePointRadius = 0.3;
@@ -140,14 +144,22 @@ bobsViewObject::bobsViewObject(sf::RenderWindow& windowRef): window(windowRef)
     sf::Vector2f bob2Center = sf::Vector2f(-3.5, 2.0);
     float bob2Radius = 1.0;
 
-    hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
-    bob1 = new bobObject(window, bob1Center, bob1Radius, sf::Color::Yellow);
-    bob2 = new bobObject(window, bob2Center, bob2Radius, sf::Color::Green);
-    rod1 = new rodObject(window, hingePointCenter, hingePointRadius, bob1Center, bob1Radius, 0.1, sf::Color::Black);
-    rod2 = new rodObject(window, bob1Center, bob1Radius, bob2Center, bob2Radius, 0.1, sf::Color::Black);
+    hingePoint = new BobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
+    bob1 = new BobObject(window, bob1Center, bob1Radius, sf::Color::Yellow);
+    bob2 = new BobObject(window, bob2Center, bob2Radius, sf::Color::Green);
+    rod1 = new RodObject(window, hingePointCenter, hingePointRadius, bob1Center, bob1Radius, 0.1, sf::Color::Black);
+    rod2 = new RodObject(window, bob1Center, bob1Radius, bob2Center, bob2Radius, 0.1, sf::Color::Black);
+}
+BobsViewObject::~BobsViewObject()
+{
+    delete hingePoint;
+    delete bob1;
+    delete bob2;
+    delete rod1;
+    delete rod2;
 }
 
-void bobsViewObject::update(sf::Event& event)
+void BobsViewObject::update(sf::Event& event)
 {
     hingePoint->update(event);
     bob1->update(event);
@@ -162,7 +174,7 @@ void bobsViewObject::update(sf::Event& event)
     rod2->update(bob1Center, bob1Radius, bob2Center, bob2Radius);
 }
 
-void bobsViewObject::draw()
+void BobsViewObject::draw()
 {
     rod1->drawObject();
     rod2->drawObject();

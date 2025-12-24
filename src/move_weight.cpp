@@ -3,7 +3,7 @@
 
 using namespace std;
 
-class bobObject
+class BobObject
 {
 
     private:
@@ -77,7 +77,7 @@ class bobObject
         }
 
     public:
-        bobObject(sf::RenderWindow& windowRef, float x, float y, float radius, sf::Color color): window(windowRef)
+        BobObject(sf::RenderWindow& windowRef, float x, float y, float radius, sf::Color color): window(windowRef)
         {
             bobColor = color;
             bobRadius = radius;
@@ -117,10 +117,10 @@ int main()
     weightView.setCenter({0, 0});
     window.setView(weightView);
 
-    vector<bobObject> weights {
-        bobObject(window, 5.0, -2.5, 0.4, sf::Color::Yellow),
-        bobObject(window, -3.5, 2.0, 0.8, sf::Color::Green),
-        bobObject(window, 0.0, 0.0, 0.3, sf::Color::Blue),
+    vector<BobObject> weights {
+        BobObject(window, 5.0, -2.5, 0.4, sf::Color::Yellow),
+        BobObject(window, -3.5, 2.0, 0.8, sf::Color::Green),
+        BobObject(window, 0.0, 0.0, 0.3, sf::Color::Blue),
 
     };
 

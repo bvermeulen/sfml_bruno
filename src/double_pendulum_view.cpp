@@ -16,7 +16,7 @@ float calcTheta(sf::Vector2f point)
     return atan2(point.x, -point.y);
 }
 
-bobObject::bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color) : window(windowRef)
+BobObject::BobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color) : window(windowRef)
 {
     bobColor = color;
     bobRadius = radius;
@@ -28,7 +28,9 @@ bobObject::bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float rad
     selected = false;
 }
 
-void bobObject::selectObject(sf::Event& event)
+BobObject::~BobObject() {}
+
+void BobObject::selectObject(sf::Event& event)
 {
     if (const auto* mouseButtonReleased = event.getIf<sf::Event::MouseButtonReleased>())
     {
@@ -56,7 +58,7 @@ void bobObject::selectObject(sf::Event& event)
     }
 }
 
-void bobObject::moveObject(sf::Event& event)
+void BobObject::moveObject(sf::Event& event)
 {
     if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
     {
@@ -82,36 +84,36 @@ void bobObject::moveObject(sf::Event& event)
     }
 }
 
-void bobObject::update(sf::Event& event)
+void BobObject::update(sf::Event& event)
 {
     selectObject(event);
     moveObject(event);
 }
 
-const float bobObject::getBobRadius() 
+const float BobObject::getBobRadius() 
 {
     return bobRadius;
 }
 
-const sf::Vector2f bobObject::getBobCenter()
+const sf::Vector2f BobObject::getBobCenter()
 {
     return bobShape.getPosition();
 }
-const bool bobObject::isMoving()
+const bool BobObject::isMoving()
 {
     return moving;
 }
-void bobObject::setBobCenter(sf::Vector2f point)
+void BobObject::setBobCenter(sf::Vector2f point)
 {
     bobShape.setPosition(point);
 }
 
-void bobObject::drawObject()
+void BobObject::drawObject()
 {
     window.draw(bobShape);
 }
 
-rodObject::rodObject(
+RodObject::RodObject(
     sf::RenderWindow& windowRef, 
     sf::Vector2f p1, float r1, 
     sf::Vector2f p2, float r2, 
@@ -126,7 +128,9 @@ rodObject::rodObject(
     rodShape.setFillColor(rodColor);
 }
 
-void rodObject::drawObject()
+RodObject::~RodObject() {}
+
+void RodObject::drawObject()
 /*
 Draw of rod up to the edge of the bobs, so that rod is not visible inside. 
 */
@@ -145,7 +149,7 @@ Draw of rod up to the edge of the bobs, so that rod is not visible inside.
     window.draw(rodShape);
 }
 
-void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
+void RodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
 {
     rodPoint1 = p1;
     rodPoint2 = p2;
@@ -153,7 +157,7 @@ void rodObject::update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2)
     radius2 = r2;
 }
 
-traceLine::traceLine(sf::RenderWindow& windowRef, float width, sf::Color color) : window(windowRef)
+TraceLine::TraceLine(sf::RenderWindow& windowRef, float width, sf::Color color) : window(windowRef)
 {
     traceWidth = width;
     traceColor = color;
@@ -161,18 +165,20 @@ traceLine::traceLine(sf::RenderWindow& windowRef, float width, sf::Color color) 
     traceShape.setFillColor(traceColor);
 }
 
-void traceLine::setTraceOn()
+TraceLine::~TraceLine() {}
+
+void TraceLine::setTraceOn()
 {
     traceOn = true;
     tracePoints.clear();
 }
 
-void traceLine::resetTraceOn()
+void TraceLine::resetTraceOn()
 {
     traceOn = false;
 }
 
-void traceLine::addPoint(sf::Vector2f point)
+void TraceLine::addPoint(sf::Vector2f point)
 {
     if (traceOn) {
         tracePoints.emplace_back(point);
@@ -183,7 +189,7 @@ void traceLine::addPoint(sf::Vector2f point)
     }
 }
 
-void traceLine::draw()
+void TraceLine::draw()
 {
     if ((tracePoints.size() < 2) | (!traceOn)) return;
 
@@ -205,7 +211,7 @@ void traceLine::draw()
     }
 }
 
-dpViewObject::dpViewObject(
+DoublependulumViewObject::DoublependulumViewObject(
     sf::RenderWindow& windowRef, 
     float r1Length, float r2Length, 
     float theta1Initial, float theta2Initial,
@@ -217,32 +223,42 @@ dpViewObject::dpViewObject(
     float hingePointRadius = 0.3;
     bob1Radius *= 0.05;
     bob2Radius *= 0.05;
-    hingePoint = new bobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
-    bob1 = new bobObject(window, hingePointCenter, bob1Radius, bob1Color);
-    bob2 = new bobObject(window, hingePointCenter, bob2Radius, bob2Color);
+    hingePoint = new BobObject(window, hingePointCenter, hingePointRadius, sf::Color::Blue);
+    bob1 = new BobObject(window, hingePointCenter, bob1Radius, bob1Color);
+    bob2 = new BobObject(window, hingePointCenter, bob2Radius, bob2Color);
     
     rod1Length = r1Length;
     rod2Length = r2Length;
     theta1 = theta1Initial;
     theta2 = theta2Initial;
     setBobPositions();
-    rod1 = new rodObject(
+    rod1 = new RodObject(
         window, 
         hingePointCenter, hingePointRadius, 
         bob1->getBobCenter(), bob1Radius, 
         0.1, sf::Color::Black
     );
-    rod2 = new rodObject(
+    rod2 = new RodObject(
         window, 
         bob1->getBobCenter(), bob1Radius, 
         bob2->getBobCenter(), bob2Radius, 
         0.1, sf::Color::Black
     );
-    trace = new traceLine(window, 0.05, sf::Color(150,150,150));
+    trace = new TraceLine(window, 0.05, sf::Color(150,150,150));
     draw();
 }
 
-void dpViewObject::update(sf::Event& event)
+DoublependulumViewObject::~DoublependulumViewObject()
+{
+    delete hingePoint;
+    delete bob1;
+    delete bob2;
+    delete rod1;
+    delete rod2;
+    delete trace;
+}
+
+void DoublependulumViewObject::update(sf::Event& event)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T))
         trace->setTraceOn();
@@ -268,7 +284,7 @@ void dpViewObject::update(sf::Event& event)
     }
 }
 
-void dpViewObject::updateThetas(float t1, float t2)
+void DoublependulumViewObject::updateThetas(float t1, float t2)
 {
     theta1 = t1;
     theta2 = t2;
@@ -276,12 +292,12 @@ void dpViewObject::updateThetas(float t1, float t2)
     setRodPositions();
 }
 
-sf::Vector2f dpViewObject::getThetas()
+sf::Vector2f DoublependulumViewObject::getThetas()
 {
     return sf::Vector2f(theta1, theta2);
 }
 
-void dpViewObject::setBobPositions()
+void DoublependulumViewObject::setBobPositions()
 {
     sf::Vector2f point1 = calcXY(rod1Length, theta1);
     bob1->setBobCenter(point1);
@@ -290,7 +306,7 @@ void dpViewObject::setBobPositions()
     bob2->setBobCenter(point2);
 }
 
-void dpViewObject::setRodPositions()
+void DoublependulumViewObject::setRodPositions()
 {
     sf::Vector2f hingePointCenter = hingePoint->getBobCenter();
     float hingePointRadius = hingePoint->getBobRadius();
@@ -303,7 +319,7 @@ void dpViewObject::setRodPositions()
     trace->addPoint(bob2Center);
 }
 
-void dpViewObject::draw()
+void DoublependulumViewObject::draw()
 {
     hingePoint->drawObject();
     bob1->drawObject();

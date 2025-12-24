@@ -9,10 +9,11 @@ using namespace std;
 const float PI = acos(-1.0);
 const float deg_rad = 180.0 / PI;
 
-class bobObject
+class BobObject
 {
     public:
-        bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color);
+        BobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color);
+        ~BobObject();
         void update(sf::Event& event);
         void drawObject();
         const sf::Vector2f getBobCenter();
@@ -31,14 +32,15 @@ class bobObject
         void moveObject(sf::Event& event);
 };
 
-class rodObject
+class RodObject
 {
     public:
-        rodObject(
+        RodObject(
             sf::RenderWindow& windowRef, 
             sf::Vector2f p1, float r1, 
             sf::Vector2f p2, float r2, 
             float width, sf::Color color);
+        ~RodObject();
         void update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2);
         void drawObject();
 
@@ -53,20 +55,21 @@ class rodObject
         sf::RectangleShape rodShape;
 };
 
-class bobsViewObject
+class BobsViewObject
 {
     public:
-        bobsViewObject(sf::RenderWindow& windowRef);
+        BobsViewObject(sf::RenderWindow& windowRef);
+        ~BobsViewObject();
         void update(sf::Event& event);
         void draw();
 
     private:
         sf::RenderWindow& window;
-        bobObject* hingePoint;
-        bobObject* bob1;
-        bobObject* bob2;
-        rodObject* rod1;
-        rodObject* rod2;
+        BobObject* hingePoint;
+        BobObject* bob1;
+        BobObject* bob2;
+        RodObject* rod1;
+        RodObject* rod2;
 };
 
 #endif // BOBS_VIEW

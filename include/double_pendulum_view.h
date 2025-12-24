@@ -7,10 +7,11 @@
 
 using namespace std;
 
-class bobObject
+class BobObject
 {
     public:
-        bobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color);
+        BobObject(sf::RenderWindow& windowRef, sf::Vector2f center, float radius, sf::Color color);
+        ~BobObject();
         void update(sf::Event& event);
         void drawObject();
         const sf::Vector2f getBobCenter();
@@ -31,14 +32,15 @@ class bobObject
         void moveObject(sf::Event& event);
 };
 
-class rodObject
+class RodObject
 {
     public:
-        rodObject(
+        RodObject(
             sf::RenderWindow& windowRef, 
             sf::Vector2f p1, float r1, 
             sf::Vector2f p2, float r2, 
             float width, sf::Color color);
+        ~RodObject();
         void update(sf::Vector2f p1, float r1, sf::Vector2f p2, float r2);
         void drawObject();
 
@@ -53,15 +55,15 @@ class rodObject
         sf::RectangleShape rodShape;
 };
 
-class traceLine
+class TraceLine
 {
     public:
-        traceLine(
+        TraceLine(
             sf:: RenderWindow& windowRef,
             float traceWidth,
             sf::Color traceColor
         );
-
+        ~TraceLine();
         void addPoint(sf::Vector2f point);
         void draw();
         void setTraceOn();
@@ -77,16 +79,17 @@ class traceLine
 
     };
 
-class dpViewObject
+class DoublependulumViewObject
 {
     public:
-        dpViewObject(
+        DoublependulumViewObject(
             sf::RenderWindow& windowRef, 
             float rod1Length, float rod2Length,
             float theta1, float theta2,
             float bob1Radius, float bob2Radius,
             sf::Color bob1Color, sf::Color bob2Color 
         );
+        ~DoublependulumViewObject();
         void update(sf::Event& event);
         void updateThetas(float t1, float t2);
         sf::Vector2f getThetas();
@@ -96,14 +99,14 @@ class dpViewObject
         sf::RenderWindow& window;
         float rod1Length, rod2Length;
         float theta1, theta2;
-        bobObject* hingePoint;
-        bobObject* bob1;
-        bobObject* bob2;
-        rodObject* rod1;
-        rodObject* rod2;
+        BobObject* hingePoint;
+        BobObject* bob1;
+        BobObject* bob2;
+        RodObject* rod1;
+        RodObject* rod2;
         void setBobPositions();
         void setRodPositions();
-        traceLine* trace;
+        TraceLine* trace;
 };
 
 #endif // DOUBLE_PENDULUM_VIEW

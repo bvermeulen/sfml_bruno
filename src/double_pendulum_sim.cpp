@@ -12,7 +12,7 @@ sf::RenderWindow createWindow()
     return window;
 }
 
-void doublependulumSim::initWindow()
+void DoublependulumSim::initWindow()
 {
     title = "Double Pendulum!!";
     windowSize.x = 1250;
@@ -29,7 +29,7 @@ void doublependulumSim::initWindow()
     printf("width = %.2f, height = %.2f, viewScale = %.2f\n", windowSize.x, windowSize.y, viewScale);
 }
 
-void doublependulumSim::initDoublePendulum()
+void DoublependulumSim::initDoublePendulum()
 {
     rod1Length = 5.0;
     rod2Length = 2.5;
@@ -39,18 +39,18 @@ void doublependulumSim::initDoublePendulum()
     angledeg2 = +157.35; // +157.35
     dampingFactor1 = 0.0;
     dampingFactor2 = 0.0;
-    deltaT = 0.00005;
+    deltaT = 0.01; //0.00005;
     sf::Color bob1Color = sf::Color::Yellow;
     sf::Color bob2Color = sf::Color::Green;
 
-    dpv = new dpViewObject(
+    dpv = new DoublependulumViewObject(
         window, 
         rod1Length, rod2Length,
         angledeg1 * deg_rad, angledeg2 * deg_rad, 
         bob1Weight, bob2Weight,
         bob1Color, bob2Color
     );
-    dpp = new doublependulumPhysics(
+    dpp = new DoublependulumPhysics(
         bob1Weight, rod1Length,
         bob2Weight, rod2Length,
         angledeg1 * deg_rad, angledeg2 * deg_rad,
@@ -63,12 +63,12 @@ void doublependulumSim::initDoublePendulum()
     timeFrame = 0.0;
 }
 
-void doublependulumSim::pollEvents() 
+void DoublependulumSim::pollEvents() 
 {
     while (optional event = window.pollEvent())
     {
         if (event->is<sf::Event::Closed>())
-            window.close();
+            exitSim();
 
         if (event->is<sf::Event::KeyPressed>())
         {   
@@ -82,7 +82,7 @@ void doublependulumSim::pollEvents()
                 stopSim();
             
             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
-                window.close();
+                exitSim();
         }
 
         dpv->update(*event);
@@ -90,16 +90,15 @@ void doublependulumSim::pollEvents()
     }
 }
 
-void doublependulumSim::rendering()
+void DoublependulumSim::rendering()
 {
     window.clear(backgroundColor);
     dpv->draw();
     window.display();
 }
 
-void doublependulumSim::running()
+void DoublependulumSim::running()
 {
-    // sf::Time elapsedTime;
     long int elapsedTime;
     int count = 0;
     printf("Running app: %s\n", title.c_str());
@@ -112,7 +111,7 @@ void doublependulumSim::running()
             if (elapsedTime > timeSim * million)
             {
                 c++;
-                dpp->updateThetasRK4();
+                dpp->updateThetasBoost();
                 timeSim += deltaT;
                 if (c == 10000) 
                 {
@@ -142,7 +141,7 @@ void doublependulumSim::running()
     }
 }
 
-void doublependulumSim::pauseSim()
+void DoublependulumSim::pauseSim()
 {
     if (paused) 
     {
@@ -156,7 +155,7 @@ void doublependulumSim::pauseSim()
     }
 }
 
-void doublependulumSim::startSim()
+void DoublependulumSim::startSim()
 {
     sf::Vector2f thetas = dpv->getThetas();
     dpp->setThetas(thetas.x, thetas.y);
@@ -166,20 +165,22 @@ void doublependulumSim::startSim()
     clock.restart();
 }
 
-void doublependulumSim::stopSim()
+void DoublependulumSim::stopSim()
 {
     started = false;
     clock.stop();
 }
 
-doublependulumSim::doublependulumSim(sf::RenderWindow& windowRef) : window(windowRef)
+void DoublependulumSim::exitSim()
+{
+    window.close();
+    delete dpv;
+    delete dpp;
+    std::exit(0);
+}
+
+DoublependulumSim::DoublependulumSim(sf::RenderWindow& windowRef) : window(windowRef)
 {
     initWindow();
     initDoublePendulum();
-}
-
-doublependulumSim::~doublependulumSim()
-{
-    delete dpv;
-    delete dpp;
 }

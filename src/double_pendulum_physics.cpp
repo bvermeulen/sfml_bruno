@@ -2,8 +2,27 @@
 #include <double_pendulum_physics.h>
 #include <cmath>
 #include <vector>
+#include <boost/numeric/odeint.hpp>
+#include <boost/bind/bind.hpp>
 
-doublependulumPhysics::doublependulumPhysics(
+
+HarmOsc::HarmOsc(
+    double b1Weight, double r1Length,
+    double b2Weight, double r2Length,
+    double df1, double df2
+)
+{
+    bob1Weight = b1Weight;
+    rod1Length = r1Length;
+    bob2Weight = b2Weight;
+    rod2Length = r2Length;
+    dampingFactor1 = df1;
+    dampingFactor2 = df2;    
+}
+
+HarmOsc::~HarmOsc() {}
+
+DoublependulumPhysics::DoublependulumPhysics(
     double b1Weight, double r1Length,
     double b2Weight, double r2Length,
     double initialTheta1, double initialTheta2,
@@ -22,9 +41,25 @@ doublependulumPhysics::doublependulumPhysics(
     theta1DoubleDot = 0.0;
     theta2DoubleDot = 0.0;
     time = 0.0;
+
+    thetaState.emplace_back(theta1);
+    thetaState.emplace_back(theta2);
+    thetaState.emplace_back(theta1Dot);
+    thetaState.emplace_back(theta2Dot);
+
+    ho = new HarmOsc(
+        bob1Weight, rod1Length,
+        bob2Weight, rod2Length,
+        dampingFactor1, dampingFactor2
+    );
 }
 
-result doublependulumPhysics::getResult()
+DoublependulumPhysics::~DoublependulumPhysics()
+{
+    delete ho;
+}
+
+result DoublependulumPhysics::getResult()
 {
     result result;
     result.theta1 = theta1;
@@ -33,8 +68,7 @@ result doublependulumPhysics::getResult()
     return result;
 }
 
-
-void doublependulumPhysics::calcThetasDoubleDotMethod1(double t1, double t2)
+void DoublependulumPhysics::calcThetasDoubleDotMethod1(double t1, double t2)
 {
 /*    
     see: https://www.engineered-mind.com/engineering/double-pendulum-matlab-code/#conclusion
@@ -61,28 +95,27 @@ void doublependulumPhysics::calcThetasDoubleDotMethod1(double t1, double t2)
     theta2DoubleDot = (_n1 * (_n2 + _n3 + _n4)) / _den;    
 }
 
-
-void doublependulumPhysics::calcThetasDoubleDotMethod2(double t1, double t2)
+void DoublependulumPhysics::calcThetasDoubleDotMethod2(double t1, double t2)
 {
-        double _n1, _n2, _n3, _n4;
-        double dt = t1 - t2;
-        double _sin_dt = sin(dt);
-        double _den = (bob1Weight + bob2Weight * _sin_dt * _sin_dt);
+    double _n1, _n2, _n3, _n4;
+    double dt = t1 - t2;
+    double _sin_dt = sin(dt);
+    double _den = (bob1Weight + bob2Weight * _sin_dt * _sin_dt);
 
-        _n1 = bob2Weight * rod1Length * theta1Dot * theta1Dot * sin(2*dt);
-        _n2 = 2 * bob2Weight * rod2Length * theta2Dot * theta2Dot * _sin_dt;
-        _n3 = 2 * g * (bob2Weight * cos(t2) * _sin_dt + bob1Weight * sin(t1));
-        _n4 = 2 * (dampingFactor1 * theta1Dot - dampingFactor2 * theta2Dot * cos(dt));
-        theta1DoubleDot = (_n1 + _n2 + _n3 + _n4)/ (-2 * rod1Length * _den);
+    _n1 = bob2Weight * rod1Length * theta1Dot * theta1Dot * sin(2*dt);
+    _n2 = 2 * bob2Weight * rod2Length * theta2Dot * theta2Dot * _sin_dt;
+    _n3 = 2 * g * (bob2Weight * cos(t2) * _sin_dt + bob1Weight * sin(t1));
+    _n4 = 2 * (dampingFactor1 * theta1Dot - dampingFactor2 * theta2Dot * cos(dt));
+    theta1DoubleDot = (_n1 + _n2 + _n3 + _n4)/ (-2 * rod1Length * _den);
 
-        _n1 = bob2Weight * rod2Length * theta2Dot * theta2Dot * sin(2*dt);
-        _n2 = 2 * (bob1Weight + bob2Weight) * rod1Length * theta1Dot * theta1Dot * _sin_dt;
-        _n3 = 2 * g * (bob1Weight + bob2Weight) * cos(t1) * _sin_dt;
-        _n4 = 2 * (dampingFactor1 * theta1Dot * cos(dt) - dampingFactor2 * theta2Dot * (bob1Weight + bob2Weight)/ bob2Weight);
-        theta2DoubleDot = (_n1 + _n2 + _n3 + _n4)/ (2 * rod2Length *_den);
+    _n1 = bob2Weight * rod2Length * theta2Dot * theta2Dot * sin(2*dt);
+    _n2 = 2 * (bob1Weight + bob2Weight) * rod1Length * theta1Dot * theta1Dot * _sin_dt;
+    _n3 = 2 * g * (bob1Weight + bob2Weight) * cos(t1) * _sin_dt;
+    _n4 = 2 * (dampingFactor1 * theta1Dot * cos(dt) - dampingFactor2 * theta2Dot * (bob1Weight + bob2Weight)/ bob2Weight);
+    theta2DoubleDot = (_n1 + _n2 + _n3 + _n4)/ (2 * rod2Length *_den);
 }
 
-void doublependulumPhysics::updateThetasEuler()
+void DoublependulumPhysics::updateThetasEuler()
 {
     calcThetasDoubleDotMethod2(theta1, theta2);
     theta1Dot += theta1DoubleDot * deltaT;
@@ -96,7 +129,7 @@ void doublependulumPhysics::updateThetasEuler()
     time += deltaT;
 }
 
-void doublependulumPhysics::updateThetasRK4()
+void DoublependulumPhysics::updateThetasRK4()
 {
     calcThetasDoubleDotMethod2(theta1, theta2);
     double V10 = deltaT * theta1Dot;
@@ -127,10 +160,21 @@ void doublependulumPhysics::updateThetasRK4()
     theta1Dot += den * (A10+2.0*A11+2.0*A12+A13);
     theta2 += den * (V20+2.0*V21+2.0*V22+V23);
     theta2Dot += den * (A20+2.0*A21+2.0*A22+A23);
-
+    time += deltaT;
 }
 
-void doublependulumPhysics::setThetas(double t1, double t2)
+void DoublependulumPhysics::updateThetasBoost()
+{
+    rk4.do_step(std::ref(*ho), thetaState, time, deltaT);
+
+    theta1 = thetaState[0];
+    theta2 = thetaState[1];
+    theta1Dot = thetaState[2];
+    theta2Dot = thetaState[3];
+    time += deltaT;  
+ }
+
+void DoublependulumPhysics::setThetas(double t1, double t2)
 {
     theta1 = t1;
     theta2 = t2;

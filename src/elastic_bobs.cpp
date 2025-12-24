@@ -17,7 +17,7 @@ int main()
     bobsView.setSize(viewScale * sf::Vector2f(width, -height));
     bobsView.setCenter({0, 0});
     window.setView(bobsView);
-    bobsViewObject bv = bobsViewObject(window);
+    BobsViewObject bv = BobsViewObject(window);
 
     printf("Hello weights!!\n");
     while (window.isOpen())
