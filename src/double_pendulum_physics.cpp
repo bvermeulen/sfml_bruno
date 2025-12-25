@@ -22,12 +22,36 @@ HarmOscillator::HarmOscillator(
 
 HarmOscillator::~HarmOscillator() {}
 
+void HarmOscillator::operator() (const state_type &thetaState, state_type &thetaDotState, const double t)
+{
+    double _n1, _n2, _n3, _n4;
+    double dt = thetaState[0] - thetaState[1];
+    double _sin_dt = sin(dt);
+    double _den = (bob1Weight + bob2Weight * _sin_dt * _sin_dt);
+
+    _n1 = bob2Weight * rod1Length * thetaState[2] * thetaState[2] * sin(2*dt);
+    _n2 = 2 * bob2Weight * rod2Length * thetaState[3] * thetaState[3] * _sin_dt;
+    _n3 = 2 * g * (bob2Weight * cos(thetaState[1]) * _sin_dt + bob1Weight * sin(thetaState[0]));
+    _n4 = 2 * (dampingFactor1 * thetaState[2] - dampingFactor2 * thetaState[3] * cos(dt));
+    thetaDotState[2] = (_n1 + _n2 + _n3 + _n4)/ (-2 * rod1Length * _den);
+            
+    _n1 = bob2Weight * rod2Length * thetaState[3] * thetaState[3] * sin(2*dt);
+    _n2 = 2 * (bob1Weight + bob2Weight) * rod1Length * thetaState[2] * thetaState[2] * _sin_dt;
+    _n3 = 2 * g * (bob1Weight + bob2Weight) * cos(thetaState[0]) * _sin_dt;
+    _n4 = 2 * (dampingFactor1 * thetaState[2] * cos(dt) - dampingFactor2 * thetaState[3] * (bob1Weight + bob2Weight)/ bob2Weight);
+    thetaDotState[3] = (_n1 + _n2 + _n3 + _n4)/ (2 * rod2Length *_den);
+            
+    thetaDotState[0] = thetaState[2]; 
+    thetaDotState[1] = thetaState[3];
+}
+
 DoublependulumPhysics::DoublependulumPhysics(
+    HarmOscillator &hoRef,
     double b1Weight, double r1Length,
     double b2Weight, double r2Length,
     double initialTheta1, double initialTheta2,
     double df1, double df2, double dt
-)
+) : ho(hoRef)
 {
     bob1Weight = b1Weight;
     rod1Length = r1Length;
@@ -46,18 +70,9 @@ DoublependulumPhysics::DoublependulumPhysics(
     thetaState.emplace_back(theta2);
     thetaState.emplace_back(theta1Dot);
     thetaState.emplace_back(theta2Dot);
-
-    ho = new HarmOscillator(
-        bob1Weight, rod1Length,
-        bob2Weight, rod2Length,
-        dampingFactor1, dampingFactor2
-    );
 }
 
-DoublependulumPhysics::~DoublependulumPhysics()
-{
-    delete ho;
-}
+DoublependulumPhysics::~DoublependulumPhysics() {}
 
 result DoublependulumPhysics::getResult()
 {
@@ -165,7 +180,7 @@ void DoublependulumPhysics::updateThetasRK4()
 
 void DoublependulumPhysics::updateThetasBoost()
 {
-    rk4.do_step(std::ref(*ho), thetaState, time, deltaT);
+    rk4.do_step(std::ref(ho), thetaState, time, deltaT);
 
     theta1 = thetaState[0];
     theta2 = thetaState[1];

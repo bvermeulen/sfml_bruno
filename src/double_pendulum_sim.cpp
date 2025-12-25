@@ -43,6 +43,12 @@ void DoublependulumSim::initDoublePendulum()
     sf::Color bob1Color = sf::Color::Yellow;
     sf::Color bob2Color = sf::Color::Green;
 
+    ho = new HarmOscillator(
+        bob1Weight, rod1Length,
+        bob2Weight, rod2Length,
+        dampingFactor1, dampingFactor2
+    );
+
     dpv = new DoublependulumViewObject(
         window, 
         rod1Length, rod2Length,
@@ -51,6 +57,7 @@ void DoublependulumSim::initDoublePendulum()
         bob1Color, bob2Color
     );
     dpp = new DoublependulumPhysics(
+        *ho,
         bob1Weight, rod1Length,
         bob2Weight, rod2Length,
         angledeg1 * deg_rad, angledeg2 * deg_rad,
@@ -176,6 +183,7 @@ void DoublependulumSim::exitSim()
     window.close();
     delete dpv;
     delete dpp;
+    delete ho;
     std::exit(0);
 }
 

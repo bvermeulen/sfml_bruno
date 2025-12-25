@@ -23,6 +23,7 @@ class DoublependulumSim
         sf::Color backgroundColor;
         DoublependulumViewObject *dpv;
         DoublependulumPhysics *dpp;
+        HarmOscillator *ho;
         
         double rod1Length;
         double rod2Length;
