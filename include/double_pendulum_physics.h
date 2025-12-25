@@ -12,15 +12,15 @@ struct result {
     double time;
 };
 
-class HarmOsc
+class HarmOscillator
 {
     public:
-        HarmOsc(
+        HarmOscillator(
             double b1Weight, double r1Length,
             double b2Weight, double r2Length,
             double df1, double df2            
         );
-        ~HarmOsc();
+        ~HarmOscillator();
         
         void operator() (const state_type &thetaState, state_type &thetaDotState, const double t)
         {
@@ -88,7 +88,7 @@ class DoublependulumPhysics
         double time;
         state_type thetaState;
         boost::numeric::odeint::runge_kutta4<state_type> rk4;        
-        HarmOsc *ho;
+        HarmOscillator *ho;
         
         void calcThetasDoubleDotMethod1(double t1, double t2);
         void calcThetasDoubleDotMethod2(double t1, double t2);

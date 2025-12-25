@@ -6,7 +6,7 @@
 #include <boost/bind/bind.hpp>
 
 
-HarmOsc::HarmOsc(
+HarmOscillator::HarmOscillator(
     double b1Weight, double r1Length,
     double b2Weight, double r2Length,
     double df1, double df2
@@ -20,7 +20,7 @@ HarmOsc::HarmOsc(
     dampingFactor2 = df2;    
 }
 
-HarmOsc::~HarmOsc() {}
+HarmOscillator::~HarmOscillator() {}
 
 DoublependulumPhysics::DoublependulumPhysics(
     double b1Weight, double r1Length,
@@ -47,7 +47,7 @@ DoublependulumPhysics::DoublependulumPhysics(
     thetaState.emplace_back(theta1Dot);
     thetaState.emplace_back(theta2Dot);
 
-    ho = new HarmOsc(
+    ho = new HarmOscillator(
         bob1Weight, rod1Length,
         bob2Weight, rod2Length,
         dampingFactor1, dampingFactor2
@@ -183,4 +183,9 @@ void DoublependulumPhysics::setThetas(double t1, double t2)
     theta1DoubleDot = 0.0;
     theta2DoubleDot = 0.0;
     time = 0.0;
+
+    thetaState[0] = theta1;
+    thetaState[1] = theta2;
+    thetaState[2] = theta1Dot;
+    thetaState[3] = theta2Dot;
 }
